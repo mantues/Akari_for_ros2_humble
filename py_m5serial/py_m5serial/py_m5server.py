@@ -93,7 +93,6 @@ class m5server(Node):
 
     # callback
     def set_display_text(self, request, response):
-        self.m5.reset_m5()
         req_text = request.text
         req_pos_x = request.pos_x
         req_pos_y = request.pos_y

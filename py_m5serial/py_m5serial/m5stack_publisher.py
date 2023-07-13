@@ -5,11 +5,11 @@ import rclpy
 from py_tutorial_interfaces.srv import AddThreeInts
 from rclpy.node import Node
 
-from py_m5serial.msg import M5
-from py_m5serial.srv import (SetAllout, SetDisplayColor,
+from akari_msgs.msg import M5
+from akari_msgs.srv import (SetAllout, SetDisplayColor,
                                SetDout, SetPwmout,
                                SetDisplayImage, SetDisplayText)
-                               
+
 from example_interfaces.srv import SetBool, Trigger
 from akari_client import AkariClient
 from akari_client.color import Color, Colors
@@ -17,7 +17,8 @@ from akari_client.position import Positions
 import random
 import time
 import os
-import sys
+import sysfile:///home/kaz/ros2_ws/src/Akari_for_ros2_humble/py_m5serial/setup.py
+
 
 
 class M5Publisher(Node):
@@ -25,9 +26,9 @@ class M5Publisher(Node):
     def __init__(self):
         super().__init__('M5Publisher')
         self.publisher_ = self.create_publisher(M5, '/M5stack', 10)
-        timer_period = 0.5
+        timer_period = 0.1
         self.timer = self.create_timer(timer_period, self.timer_callback)
-        
+
         self.akari = AkariClient()
         self.m5 = self.akari.m5stack
         self.data = self.m5.get()
@@ -58,9 +59,9 @@ def main(args=None):
     m5simple_publisher = M5Publisher()
     rclpy.spin(m5simple_publisher)
     m5simple_publisher.destroy_node()
-    
+
     rclpy.shutdown()
-    
+
 
 if __name__ == "__main__":
     main()

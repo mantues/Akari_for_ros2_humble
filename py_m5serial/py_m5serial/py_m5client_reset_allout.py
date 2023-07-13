@@ -4,12 +4,12 @@
 import rclpy
 from rclpy.node import Node
 
-from py_m5serial.msg import M5
-from py_m5serial.srv import (SetAllout, SetDisplayColor,
+from akari_msgs.msg import M5
+from akari_msgs.srv import (SetAllout, SetDisplayColor,
                                SetDout, SetPwmout,
                                SetDisplayImage, SetDisplayText,
                                Trigger)
-                               
+
 from akari_client import AkariClient
 from akari_client.color import Color, Colors
 from akari_client.position import Positions
@@ -26,24 +26,24 @@ color_pair = ['BLACK','NAVY','DARKGREEN','DARKCYAN','MAROON','PURPLE','OLIVE',
 class m5client(Node):
 
     def __init__(self):
-        super().__init__('m5client_reset_node')
+        super().__init__('m5client_reset_allout_node')
         # create client
-        self.cli = self.create_client(Trigger, 'reset_m5')
+        self.cli = self.create_client(Trigger, 'reset_allout_m5')
         while not self.cli.wait_for_service(timeout_sec=1.0):
             self.get_logger().info('service not available, waiting again...')
-        
+
         # create request
         self.req = Trigger.Request()
-                
+
         self.akari = AkariClient()
         self.m5 = self.akari.m5stack
         self.data = self.m5.get()
 
     def send_request(self):
         #color_num = int(input())
-        self.req.trigger = "RESET"
+        self.req.trigger = "RESETALLOUT"
         self.get_logger().info('M5Stack reset : %s' % (self.req))
-        
+
         self.future = self.cli.call_async(self.req)
         rclpy.spin_until_future_complete(self, self.future)
         return self.future.result()
@@ -57,7 +57,7 @@ def main():
     response = client.send_request()
     client.get_logger().info('Result: : %s' %(str(response.result)))
     client.destroy_node()
-    
+
     rclpy.shutdown()
 
 

@@ -5,13 +5,13 @@ import rclpy
 from rclpy.node import Node
 from rclpy.action import ActionClient
 
-from py_m5serial.msg import M5
-from py_m5serial.srv import (SetAllout, SetDisplayColor,
+from akari_msgs.msg import M5
+from akari_msgs.srv import (SetAllout, SetDisplayColor,
                                SetDout, SetPwmout,
                                SetDisplayImage, SetDisplayText,
                                Trigger)
-from py_m5serial.action import (MoveJoint)
-                               
+from akari_msgs.action import (MoveJoint)
+
 from akari_client import AkariClient
 from akari_client.color import Color, Colors
 from akari_client.position import Positions
@@ -26,7 +26,7 @@ class m5client(Node):
         super().__init__('m5client_move_joints_action_client_node')
         # create action client
         self._action_client = ActionClient(self, MoveJoint, 'move_joints')
-        
+
     def send_goal(self):
         goal_msg = MoveJoint.Goal()
         goal_pan = random.uniform(-1.0, 1.0)
@@ -44,11 +44,11 @@ class m5client(Node):
         self._action_client.wait_for_server()
 
         self._send_goal_future = self._action_client.send_goal_async(goal_msg)
-        
+
         self._send_goal_future.add_done_callback(self.goal_response_callback)
-        
+
         return self._action_client.send_goal_async(goal_msg)
-        
+
     def goal_response_callback(self, future):
         goal_handle = future.result()
         if not goal_handle.accepted:
@@ -64,13 +64,13 @@ class m5client(Node):
         result = future.result().result
         self.get_logger().info('Result: {0}'.format(result.result))
         rclpy.shutdown()
-        
+
     def feedback_callback(self, feedback_msg):
         feedback = feedback_msg.feedback
         self.get_logger().info('Received feedback: {0}'.format(feedback.pos_pan))
         self.get_logger().info('Received feedback: {0}'.format(feedback.pos_tilt))
-        
-        
+
+
 def main():
     rclpy.init()
     # create client
